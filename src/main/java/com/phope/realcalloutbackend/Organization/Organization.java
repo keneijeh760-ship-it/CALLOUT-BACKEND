@@ -1,4 +1,4 @@
-package com.phope.realcalloutbackend.Entities;
+package com.phope.realcalloutbackend.Organization;
 
 import com.phope.realcalloutbackend.Shared.config.request.audit.AuditEntity;
 import jakarta.persistence.*;
