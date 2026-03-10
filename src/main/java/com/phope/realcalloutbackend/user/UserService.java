@@ -1,6 +1,7 @@
 package com.phope.realcalloutbackend.user;
 
 import com.phope.realcalloutbackend.Shared.config.exception.NotFoundException;
+import com.phope.realcalloutbackend.user.dto.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +15,7 @@ import java.util.UUID;
 public class UserService {
     private final UserRepository userRepository;
     @Transactional
-    public User getOrCreateUser(Jwt jwt) {
+    public UserResponse getOrCreateUser(Jwt jwt) {
         String supabaseUid = jwt.getSubject();
 
         User user = userRepository.findBySupabaseUid(supabaseUid)
