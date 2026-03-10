@@ -1,4 +1,4 @@
-package com.phope.realcalloutbackend.User;
+package com.phope.realcalloutbackend.user;
 
 public enum UserRole {
     REPORTER,
