@@ -1,8 +1,7 @@
 package com.phope.realcalloutbackend.organization;
 
 import com.phope.realcalloutbackend.Shared.config.exception.NotFoundException;
-import jakarta.persistence.Id;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,13 +9,13 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Transactional()
+@Transactional(readOnly = true)
 public class OrganizationService {
     private final OrganizationRepository organizationRepository;
 
     public Organization getOrgByDomain(String domain){
         return organizationRepository.findOrganizationByDomain(domain)
-                .orElseThrow(()-> new NotFoundException("Organization not Found", domain));
+                .orElseThrow(()-> new NotFoundException("Organization", domain));
 
     }
 
