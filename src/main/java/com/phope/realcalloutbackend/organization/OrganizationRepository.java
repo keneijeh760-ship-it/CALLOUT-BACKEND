@@ -1,4 +1,4 @@
-package com.phope.realcalloutbackend.Organization;
+package com.phope.realcalloutbackend.organization;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
