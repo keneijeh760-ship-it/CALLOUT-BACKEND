@@ -1,0 +1,55 @@
+# Production profile — activated in ECS via SPRING_PROFILES_ACTIVE=prod
+# Every sensitive value comes from environment variables injected by
+# AWS Secrets Manager into the ECS task at runtime. Nothing hardcoded here.
+
+spring:
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  jpa:
+    show-sql: false
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${SUPABASE_JWKS_URI}
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD}
+      ssl:
+        enabled: true             # ElastiCache in prod requires SSL
+
+# Real AWS services in prod
+aws:
+  region: ${AWS_REGION}
+  s3:
+    bucket-name: ${S3_BUCKET_NAME}
+  sqs:
+    incident-submitted-queue: ${SQS_INCIDENT_SUBMITTED_QUEUE}
+    notification-queue: ${SQS_NOTIFICATION_QUEUE}
+    archival-queue: ${SQS_ARCHIVAL_QUEUE}
+  ses:
+    from-email: ${SES_FROM_EMAIL}
+
+callout:
+  allowed-domain: ${ALLOWED_DOMAIN}
+
+logging:
+  level:
+    com.kene.callout: INFO
+    org.springframework: WARN
+  pattern:
+    # JSON logging for CloudWatch — makes logs parseable and searchable
+    console: '{"timestamp":"%d{ISO8601}","level":"%p","logger":"%logger{36}","message":"%m"}%n'

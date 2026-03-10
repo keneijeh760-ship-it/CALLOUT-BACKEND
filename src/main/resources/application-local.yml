@@ -1,0 +1,54 @@
+# This file activates when you run with --spring.profiles.active=local
+# It overrides the base application.yml with local dev values.
+# You never need real AWS credentials locally — everything is mocked or local.
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/callout_dev
+    username: callout
+    password: callout_secret
+    hikari:
+      maximum-pool-size: 5        # Low — local dev doesn't need many connections
+      minimum-idle: 1
+
+  jpa:
+    show-sql: true                # See all queries locally — helpful for debugging
+
+  # Override JWT to use a local test secret in dev
+  # (You'll use a mock JWT or disable auth locally — see SecurityConfig)
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:54321/auth/v1/keys  # Local Supabase emulator
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:                   # No password for local Redis
+
+# No real AWS locally — these point to LocalStack or are disabled
+aws:
+  region: eu-west-1
+  s3:
+    bucket-name: callout-local-bucket
+  sqs:
+    incident-submitted-queue: http://localhost:4566/000000000000/incident-submitted-queue
+    notification-queue: http://localhost:4566/000000000000/notification-queue
+    archival-queue: http://localhost:4566/000000000000/archival-queue
+
+callout:
+  allowed-domain: pau.edu.ng
+
+# Show full health details locally
+management:
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.kene.callout: DEBUG       # Full debug logging for your code locally
+    org.springframework.security: DEBUG  # See JWT validation steps
+    org.hibernate.SQL: DEBUG      # See all SQL
