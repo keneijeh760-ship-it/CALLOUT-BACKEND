@@ -6,10 +6,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
-    Optional<User> findUserBySupabaseUid(String supabaseUid);
+    Optional<User> findBySupabaseUid(String supabaseUid);
 
-    Optional<User> findUserByOrgId(UUID orgId);
+    Optional<User> findByOrgIdAndUsername(UUID orgId, String username);
 
-    Optional<User> findUserByUsername(String username);
+    boolean existsByOrgIdAndUsername(UUID orgId, String username);
 
 }
