@@ -18,13 +18,13 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<UserResponse>> getorCreateUser(@AuthenticationPrincipal Jwt jwt){
-        UserResponse user = userService.getOrCreateUser(jwt);
+        User user = userService.getOrCreateUser(jwt);
 
         UserResponse userResponse = UserResponse.builder()
                 .id(user.getId())
                 .username(user.getUsername())
-                .role(user.getRole())
-                .trustScore(user.getTrustScore())
+                .role(user.getUserRole())
+                .trustScore(user.getTrustSore())
                 .createdAt(user.getCreatedAt())
                 .build();
 

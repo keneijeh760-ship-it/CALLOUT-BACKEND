@@ -15,7 +15,7 @@ import java.util.UUID;
 public class UserService {
     private final UserRepository userRepository;
     @Transactional
-    public UserResponse getOrCreateUser(Jwt jwt) {
+    public User  getOrCreateUser(Jwt jwt) {
         String supabaseUid = jwt.getSubject();
 
         User user = userRepository.findBySupabaseUid(supabaseUid)
