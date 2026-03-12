@@ -7,22 +7,23 @@ import com.phope.realcalloutbackend.incident.dto.SubmitIncidentRequest;
 import com.phope.realcalloutbackend.incident.dto.UpdateStatusRequest;
 import com.phope.realcalloutbackend.user.User;
 import com.phope.realcalloutbackend.user.UserService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.oauth2.jwt.Jwt;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class IncidentService {
     private final IncidentRepository incidentRepository;
     private final UserService userService;
-
+    @Transactional
     public Incident submitIncident(SubmitIncidentRequest request, Jwt jwt){
         User reporter = userService.getOrCreateUser(jwt);
         UUID  orgId = TenantContext.getTenant();
@@ -39,18 +40,18 @@ public class IncidentService {
                 : IncidentUrgency.NORMAL);
         incident.setAttachment_urls(request.getAttachmentUrls());
 
-        Incident saved = incidentRepository.save(incident);
+        return incidentRepository.save(incident);
 
 
 
-        return saved;
+
 
     }
 
     public Incident getById (UUID id){
         UUID orgId = TenantContext.getTenant();
 
-        Incident incident = incidentRepository.findByIdAndOrgId(orgId, id)
+        Incident incident = incidentRepository.findByIdAndOrgId(id, orgId)
                 .orElseThrow(() -> new NotFoundException("Incident", id));
 
         return  incident;
