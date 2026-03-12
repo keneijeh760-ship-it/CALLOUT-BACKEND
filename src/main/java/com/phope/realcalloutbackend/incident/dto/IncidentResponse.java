@@ -20,12 +20,14 @@ public class IncidentResponse {
     private UUID id;
     private String title;
     private String description;
+    private UUID reporterId;
     private UUID categoryId;
     private String locationTag;
     private IncidentStatus status;
     private IncidentUrgency urgency;
     private int upvoteCount;
     private int trackCount;
+    @Builder.Default
     private List<String> attachmentUrls = new ArrayList<>();
     private Instant createdAt;
 }
