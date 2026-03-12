@@ -3,6 +3,7 @@ package com.phope.realcalloutbackend.user;
 import com.phope.realcalloutbackend.Shared.config.exception.NotFoundException;
 import com.phope.realcalloutbackend.user.dto.UserResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,8 @@ public class UserService {
 
         User user = userRepository.findBySupabaseUid(supabaseUid)
                 .orElseGet(() -> createNewUser(jwt));
+
+        return user;
     }
 
         private User createNewUser(Jwt jwt) {
