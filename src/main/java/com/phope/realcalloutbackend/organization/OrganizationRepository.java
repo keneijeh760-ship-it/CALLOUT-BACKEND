@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface OrganizationRepository extends JpaRepository<Organization, UUID> {
-    Optional<Organization> findOrganizationByDomain(String domain);
+    Optional<Organization> findByDomain(String domain);
 
     Optional<Organization> findOrganizationBySlug(String slug);
 }

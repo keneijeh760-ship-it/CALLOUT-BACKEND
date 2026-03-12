@@ -1,7 +1,6 @@
 package com.phope.realcalloutbackend.organization;
 
 import com.phope.realcalloutbackend.Shared.config.exception.NotFoundException;
-import com.phope.realcalloutbackend.organization.dto.OrganizationResponse;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,7 @@ public class OrganizationService {
     private final OrganizationRepository organizationRepository;
 
     public Organization getOrgByDomain(String domain){
-        return organizationRepository.findOrganizationByDomain(domain)
+        return organizationRepository.findByDomain(domain)
                 .orElseThrow(()-> new NotFoundException("Organization", domain));
 
     }
@@ -25,7 +24,7 @@ public class OrganizationService {
                 .orElseThrow(()-> new NotFoundException("Organization", id));
     }
 
-    public Organization getOrgBySlug (String slug){
+    public Organization getBySlug (String slug){
         return organizationRepository.findOrganizationBySlug(slug)
                 .orElseThrow(() -> new NotFoundException("Organization", slug));
     }

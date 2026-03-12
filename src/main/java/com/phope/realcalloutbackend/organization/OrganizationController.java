@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/organization")
+@RequestMapping("/organizations")
 @RequiredArgsConstructor
 public class OrganizationController {
     private final OrganizationService organizationService;
 
-    @GetMapping("/organisations/{slug}")
+    @GetMapping("/{slug}")
     public ResponseEntity<ApiResponse<OrganizationResponse>> getOrgBySlug(@PathVariable String slug){
-        Organization organization = organizationService.getOrgBySlug(slug);
+        Organization organization = organizationService.getBySlug(slug);
 
         OrganizationResponse org = OrganizationResponse
                 .builder()
