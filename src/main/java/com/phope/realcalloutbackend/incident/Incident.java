@@ -42,7 +42,7 @@ public class Incident extends AuditEntity {
     @Column(name = "attachment_urls")
     @JdbcTypeCode(SqlTypes.ARRAY)
     private List<String> attachment_urls = new ArrayList<>();
-    @Column(name = "tatus", nullable = false)
+    @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private IncidentStatus incidentStatus = IncidentStatus.PENDING;
     @Column(name = "urgency", nullable = false)
