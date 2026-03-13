@@ -25,6 +25,14 @@ public class IncidentController {
         IncidentResponse response = IncidentResponse
                 .builder()
                 .categoryId(request.getCategoryId())
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .attachmentUrls(request.getAttachmentUrls())
+                .locationTag(request.getLocationTag())
+                .urgency(request.getUrgency())
+                .build();
+
+        return ResponseEntity.ok(ApiResponse.ok(response));
 
 
 
