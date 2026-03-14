@@ -56,20 +56,17 @@ public class UpvoteService {
     @Transactional
     public void removeUpvote(UUID incidentId, Jwt jwt) {
 
-        // Step 1 — who is doing this?
         User user = userService.getOrCreateUser(jwt);
 
-        // Step 2 — find the upvote
-        // Must scope to BOTH incidentId and userId —
-        // never delete by userId alone or you'd delete across incidents
+
         Upvote upvote = upvoteRepository
                 .findByIncidentIdAndUserId(incidentId, user.getId())
                 .orElseThrow(() -> new NotFoundException("Upvote", incidentId));
 
-        // Step 3 — delete it
+
         upvoteRepository.delete(upvote);
 
-        // Step 4 — decrement the counter
+
         Incident incident = incidentRepository.findById(incidentId)
                 .orElseThrow(() -> new NotFoundException("Incident", incidentId));
 

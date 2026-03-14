@@ -16,13 +16,14 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @Setter
-@Table(name = "upvote")
+@Table(name = "upvotes")
 public class Upvote  extends AuditEntity {
     @Id
     @UuidGenerator
+    @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
-    @Column(name = "incident_Id", nullable = false)
+    @Column(name = "incident_id", nullable = false)
     private UUID incidentId;
-    @Column (name = "user_Id", nullable = false)
+    @Column (name = "user_id", nullable = false)
     private UUID userId;
 }
