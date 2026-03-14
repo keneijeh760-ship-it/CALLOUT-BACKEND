@@ -12,4 +12,6 @@ public interface UpvoteRepository extends JpaRepository<Upvote, UUID> {
     void deleteByIncidentIdAndUserId(UUID incidentId, UUID userId);
 
     boolean existsUpvoteByUserId(UUID userId);
+
+    boolean existsByIncidentIdAndUserId(UUID incidentId, UUID id);
 }
