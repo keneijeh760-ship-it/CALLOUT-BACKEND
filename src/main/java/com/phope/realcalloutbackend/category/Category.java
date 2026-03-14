@@ -5,7 +5,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,7 +16,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "category")
+@Table(name = "categories")
 public class Category extends AuditEntity {
     @Id
     @UuidGenerator
@@ -29,8 +28,8 @@ public class Category extends AuditEntity {
     private String name;
     @Column(name = "slug", nullable = false)
     private String slug;
-    @Column(name = "description", nullable = false)
+    @Column(name = "description")
     private String description;
     @Column(name = "is_active",  nullable = false)
-    private Boolean isActive;
+    private boolean isActive = true;
 }
