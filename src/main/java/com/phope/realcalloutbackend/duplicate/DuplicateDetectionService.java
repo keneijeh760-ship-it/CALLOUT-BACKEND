@@ -12,13 +12,13 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class DuplicateDetectionService {
 
     private final DuplicateSuggestionRepository duplicateSuggestionRepository;
     private final IncidentRepository incidentRepository;
 
-    public List<Incident> findPotentialDuplicates(UUID incidentId, String title, UUID orgId){
+    public List<DuplicateSuggestion> findPotentialDuplicates(UUID incidentId, String title, UUID orgId){
         List<Incident> similarIncidents = incidentRepository.findSimilarByTitle(
                 incidentId,
                 title,
@@ -35,6 +35,6 @@ public class DuplicateDetectionService {
                 })
                 .toList();
 
-        return  duplicateSuggestionRepository.saveAll(suggestions);;
+        return  duplicateSuggestionRepository.saveAll(suggestions);
     }
 }
