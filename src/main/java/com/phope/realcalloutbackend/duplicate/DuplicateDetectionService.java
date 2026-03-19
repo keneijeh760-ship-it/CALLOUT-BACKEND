@@ -23,6 +23,18 @@ public class DuplicateDetectionService {
                 incidentId,
                 title,
                 orgId,
-                List.of(IncidentStatus.SPAM, IncidentStatus.ARCHIVED)
+                List.of(IncidentStatus.SPAM, IncidentStatus.ARCHIVED));
+
+        List<DuplicateSuggestion> suggestions = similarIncidents.stream()
+                .map(match -> {
+                    DuplicateSuggestion suggestion = new DuplicateSuggestion();
+                    suggestion.setSourceIncidentId(incidentId);
+                    suggestion.setSuggestedIncidentId(match.getId());
+                    suggestion.setAlgorithm(Algorithm.FUZZY);
+                    return  suggestion;
+                })
+                .toList();
+
+        return  duplicateSuggestionRepository.saveAll(suggestions);;
     }
 }
