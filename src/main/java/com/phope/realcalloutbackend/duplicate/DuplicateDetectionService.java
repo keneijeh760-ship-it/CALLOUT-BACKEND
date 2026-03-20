@@ -26,14 +26,15 @@ public class DuplicateDetectionService {
                 List.of(IncidentStatus.SPAM, IncidentStatus.ARCHIVED));
 
         List<DuplicateSuggestion> suggestions = similarIncidents.stream()
-                .map(match -> DuplicateSuggestion.of(
-                        incidentId,
-                        match.getId(),
-                        match.getSimilarityScore(),  // real score, not hardcoded
-                        Algorithm.FUZZY
-                ))
+                .map(match -> {
+                    DuplicateSuggestion suggestion = new DuplicateSuggestion();
+                    suggestion.setSourceIncidentId(incidentId);
+                    suggestion.setSuggestedIncidentId(match.getId());
+                    suggestion.setSimiliarityScore((float) match.getSimilarityScore());
+                    suggestion.setAlgorithm(Algorithm.FUZZY);
+                    return suggestion;
+                })
                 .toList();
-
         return  duplicateSuggestionRepository.saveAll(suggestions);
     }
 }
