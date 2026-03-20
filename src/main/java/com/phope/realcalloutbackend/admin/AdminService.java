@@ -1,6 +1,8 @@
 package com.phope.realcalloutbackend.admin;
 
+import com.phope.realcalloutbackend.Shared.config.exception.NotFoundException;
 import com.phope.realcalloutbackend.Shared.config.tenant.TenantContext;
+import com.phope.realcalloutbackend.admin.dto.AssignIncidentRequest;
 import com.phope.realcalloutbackend.incident.Incident;
 import com.phope.realcalloutbackend.incident.IncidentRepository;
 import com.phope.realcalloutbackend.incident.IncidentStatus;
@@ -20,9 +22,10 @@ import java.util.UUID;
 public class AdminService {
 
     private final IncidentRepository incidentRepository;
+    UUID orgId = TenantContext.getTenant();
 
     public Page<Incident> getIncidentQueue(Pageable pageable) {
-        UUID orgId = TenantContext.getTenant();
+
 
         // Moderators see everything except spam
         return incidentRepository.findActiveFeed(
@@ -30,5 +33,14 @@ public class AdminService {
                 List.of(IncidentStatus.SPAM),
                 pageable
         );
+    }
+
+    public Incident assignIncident(UUID incidentId, AssignIncidentRequest request){
+        Incident incident = incidentRepository.findByIdAndOrgId(incidentId, orgId )
+                .orElseThrow(() -> new NotFoundException("Incident", incidentId));
+
+        incident.setAssignedTo(request.getResolverId());
+
+        return incidentRepository.save(incident);
     }
 }
