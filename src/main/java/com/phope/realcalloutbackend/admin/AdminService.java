@@ -43,4 +43,14 @@ public class AdminService {
 
         return incidentRepository.save(incident);
     }
+
+    public String exportCsv(UUID orgId){
+        List<Incident> incidents = incidentRepository.findAllByOrgIdAndStatusNot(orgId, IncidentStatus.SPAM);
+        StringBuilder csv = new StringBuilder();
+        csv.append("id,title,status,urgency,createdAt\n");
+        incidents.forEach(i -> csv.append(String.format("%s,%s,%s,%s,%s\n",
+                i.getId(), i.getTitle(), i.getIncidentStatus(),
+                i.getIncidentUrgency(), i.getCreatedAt())));
+        return csv.toString();
+    }
 }

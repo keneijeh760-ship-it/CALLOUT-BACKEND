@@ -46,4 +46,6 @@ public interface IncidentRepository extends JpaRepository<Incident, UUID> {
             @Param("orgId") UUID orgId,
             @Param("excludedStatuses") Collection<IncidentStatus> excludedStatuses
     );
+
+    List<Incident> findAllByOrgIdAndStatusNot(UUID orgId, IncidentStatus status);
 }
