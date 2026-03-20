@@ -14,8 +14,26 @@ import java.util.UUID;
 
 
 public interface DuplicateSuggestionRepository extends JpaRepository<UUID, DuplicateSuggestion> {
-    Optional<DuplicateSuggestion> findAllBySourceIncidentIdAndIsResolvedFalse(UUID sourceIncidentId);
+    List<DuplicateSuggestion> findAllBySourceIncidentIdAndIsResolvedFalse(UUID sourceIncidentId);
 
+    @Query("""
+    SELECT new com.phope.realcalloutbackend.duplicate.SimilarIncidentResult(
+        i.id,
+        function('similarity', i.title, :title)
+    )
+    FROM Incident i
+    WHERE i.orgId = :orgId
+    AND i.id != :incidentId
+    AND i.incidentStatus NOT IN :excludedStatuses
+    AND function('similarity', i.title, :title) > 0.4
+    ORDER BY function('similarity', i.title, :title) DESC
+    """)
+    List<SimilarIncidentResult> findSimilarByTitle(
+            @Param("incidentId") UUID incidentId,
+            @Param("title") String title,
+            @Param("orgId") UUID orgId,
+            @Param("excludedStatuses") Collection<IncidentStatus> excludedStatuses
+    );
 
 
 

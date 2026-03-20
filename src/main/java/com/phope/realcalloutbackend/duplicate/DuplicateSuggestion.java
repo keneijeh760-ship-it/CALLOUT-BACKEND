@@ -25,6 +25,7 @@ public class DuplicateSuggestion extends AuditEntity {
     private UUID suggestedIncidentId;
     @Column(name = "similiarity_score", nullable = false)
     private float similiarityScore;
+    @Enumerated(EnumType.STRING)
     @Column(name = "algorithm", nullable = false)
     private Algorithm algorithm;
     @Column(name = "is_resolved", nullable = false)

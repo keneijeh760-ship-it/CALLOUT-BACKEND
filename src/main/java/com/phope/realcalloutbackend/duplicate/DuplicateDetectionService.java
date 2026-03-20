@@ -19,20 +19,19 @@ public class DuplicateDetectionService {
     private final IncidentRepository incidentRepository;
 
     public List<DuplicateSuggestion> findPotentialDuplicates(UUID incidentId, String title, UUID orgId){
-        List<Incident> similarIncidents = incidentRepository.findSimilarByTitle(
+        List<SimilarIncidentResult> similarIncidents = incidentRepository.findSimilarByTitle(
                 incidentId,
                 title,
                 orgId,
                 List.of(IncidentStatus.SPAM, IncidentStatus.ARCHIVED));
 
         List<DuplicateSuggestion> suggestions = similarIncidents.stream()
-                .map(match -> {
-                    DuplicateSuggestion suggestion = new DuplicateSuggestion();
-                    suggestion.setSourceIncidentId(incidentId);
-                    suggestion.setSuggestedIncidentId(match.getId());
-                    suggestion.setAlgorithm(Algorithm.FUZZY);
-                    return  suggestion;
-                })
+                .map(match -> DuplicateSuggestion.of(
+                        incidentId,
+                        match.getId(),
+                        match.getSimilarityScore(),  // real score, not hardcoded
+                        Algorithm.FUZZY
+                ))
                 .toList();
 
         return  duplicateSuggestionRepository.saveAll(suggestions);
