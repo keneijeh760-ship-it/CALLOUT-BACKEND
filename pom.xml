@@ -77,12 +77,7 @@
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
 
-        <!--
-            OAuth2 Jose — the underlying JWT library.
-            Handles the actual signature verification against Supabase's JWKS.
-            The resource server starter pulls this in automatically but
-            we declare it explicitly for clarity.
-        -->
+
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-jose</artifactId>
@@ -120,22 +115,13 @@
             <artifactId>flyway-core</artifactId>
         </dependency>
 
-        <!--
-            Flyway PostgreSQL support — Flyway needs this specifically
-            for PostgreSQL dialect support. Without it Flyway can't
-            connect to a Postgres database.
-        -->
+
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
         </dependency>
 
-        <!-- ==================== VALIDATION ==================== -->
-        <!--
-            Bean Validation — gives you @NotBlank, @NotNull, @Size,
-            @Valid on controller method parameters.
-            Without this, validation annotations are silently ignored.
-        -->
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
@@ -196,101 +182,60 @@
             <artifactId>secretsmanager</artifactId>
         </dependency>
 
-        <!--
-            AWS URL Connection HTTP Client.
-            The AWS SDK needs an HTTP client to make requests to AWS.
-            This is the standard synchronous HTTP client.
-            Without it the AWS SDK throws a NoClassDefFoundError at runtime.
-        -->
+
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>url-connection-client</artifactId>
         </dependency>
 
-        <!-- ==================== UTILITIES ==================== -->
-        <!--
-            Lombok — generates boilerplate at compile time.
-            @Getter, @Setter, @NoArgsConstructor, @Builder,
-            @RequiredArgsConstructor, @Slf4j all come from here.
-            optional=true means it's not included in the final JAR —
-            it only runs during compilation.
-        -->
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
 
-        <!--
-            Jackson Databind — JSON serialisation and deserialisation.
-            Spring Boot includes this via spring-boot-starter-web
-            but we declare it explicitly because SqsPublisher uses
-            ObjectMapper directly to serialise events to JSON strings.
-        -->
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
-        <!-- ==================== MONITORING ==================== -->
-        <!--
-            Spring Actuator — exposes /actuator/health endpoint.
-            AWS ECS and ALB ping this endpoint to check if your
-            container is alive. Without it ECS kills your container.
-        -->
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-        <!-- ==================== TESTING ==================== -->
-        <!--
-            Spring Boot Test — gives you @SpringBootTest,
-            MockMvc, @WebMvcTest, @DataJpaTest.
-            The foundation of all your tests.
-        -->
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
 
-        <!--
-            Spring Security Test — gives you @WithMockUser,
-            SecurityMockMvcRequestPostProcessors.
-            Needed to test secured endpoints without a real JWT.
-        -->
+
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
 
-        <!--
-            Spring Boot Testcontainers integration — lets you spin up
-            a real PostgreSQL Docker container during tests instead of
-            using an in-memory database. Tests run against real Postgres.
-        -->
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-testcontainers</artifactId>
             <scope>test</scope>
         </dependency>
 
-        <!--
-            Testcontainers JUnit 5 integration — @Testcontainers and
-            @Container annotations that manage container lifecycle.
-        -->
+
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
 
-        <!--
-            Testcontainers PostgreSQL module — the actual PostgreSQL
-            container image configuration for Testcontainers.
-        -->
+
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
@@ -326,10 +271,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <excludes>
-                        <!--
-                            Lombok is compile-only — exclude from the final JAR.
-                            It has already done its job by this point.
-                        -->
+
                         <exclude>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
