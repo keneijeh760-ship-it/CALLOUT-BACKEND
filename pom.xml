@@ -1,135 +1,302 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.3</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>3.4.1</version>
+        <relativePath/>
     </parent>
+
     <groupId>com.phope</groupId>
     <artifactId>REALCALLOUTBACKEND</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>REAL CALLOUT BACKEND</name>
-    <description>REAL CALLOUT BACKEND</description>
-    <url/>
-    <licenses>
-        <license/>
-    </licenses>
-    <developers>
-        <developer/>
-    </developers>
-    <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
-    </scm>
+
     <properties>
         <java.version>21</java.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
+        <aws.sdk.version>2.29.0</aws.sdk.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!--
+                AWS SDK Bill of Materials (BOM).
+                This manages the version of every AWS SDK module automatically.
+                Without this, each AWS dependency needs its own version number
+                and they can conflict with each other.
+                With this, you just declare the module and the BOM picks the version.
+            -->
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>${aws.sdk.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
+
+        <!-- ==================== CORE WEB ==================== -->
+        <!--
+            Spring MVC — gives you @RestController, @GetMapping,
+            @PostMapping, ResponseEntity, etc.
+            The foundation of your REST API layer.
+        -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-flyway</artifactId>
-        </dependency>
+
+        <!-- ==================== SECURITY ==================== -->
+        <!--
+            Spring Security — gives you @PreAuthorize, SecurityFilterChain,
+            the filter chain that intercepts every request.
+        -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
+
+        <!--
+            OAuth2 Resource Server — this is what validates Supabase JWTs.
+            Provides the jwt() DSL in SecurityConfig and the Jwt class
+            you use in @AuthenticationPrincipal Jwt jwt.
+            Without this, JWT validation doesn't work at all.
+        -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webmvc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webservices</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-database-postgresql</artifactId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
 
+        <!--
+            OAuth2 Jose — the underlying JWT library.
+            Handles the actual signature verification against Supabase's JWKS.
+            The resource server starter pulls this in automatically but
+            we declare it explicitly for clarity.
+        -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-jose</artifactId>
+        </dependency>
+
+        <!-- ==================== DATA / DATABASE ==================== -->
+        <!--
+            Spring Data JPA — gives you JpaRepository, @Entity, @Table,
+            @Column, @Query, Pageable, Page, and all JPA annotations.
+            The entire data access layer depends on this.
+        -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-            <optional>true</optional>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
+
+        <!--
+            PostgreSQL JDBC driver — the actual connector between
+            your app and the Supabase PostgreSQL database.
+            Runtime scope — needed at runtime not compile time.
+        -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
 
+        <!-- ==================== MIGRATIONS ==================== -->
+        <!--
+            Flyway core — the migration engine that runs your
+            V1__create_organisations.sql etc. on startup.
+        -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+
+        <!--
+            Flyway PostgreSQL support — Flyway needs this specifically
+            for PostgreSQL dialect support. Without it Flyway can't
+            connect to a Postgres database.
+        -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
+
+        <!-- ==================== VALIDATION ==================== -->
+        <!--
+            Bean Validation — gives you @NotBlank, @NotNull, @Size,
+            @Valid on controller method parameters.
+            Without this, validation annotations are silently ignored.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- ==================== CACHE / REDIS ==================== -->
+        <!--
+            Spring Data Redis — gives you RedisTemplate,
+            RedisConnectionFactory, @EnableCaching.
+            Used for rate limiting, feed caching, dedup cache.
+            Points to ElastiCache in production, local Redis in dev.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <!-- ==================== AWS SDK ==================== -->
+        <!--
+            S3 — attachment storage.
+            Gives you S3Client, S3Presigner, PutObjectRequest,
+            GetObjectRequest, and all S3 presigning classes.
+        -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+        </dependency>
+
+        <!--
+            SQS — async event queues.
+            Gives you SqsClient, SendMessageRequest.
+            Used in SqsPublisher to publish incident submitted events
+            and notification events.
+        -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>sqs</artifactId>
+        </dependency>
+
+        <!--
+            SES v2 — email sending.
+            Gives you SesV2Client, SendEmailRequest, EmailDestination.
+            Used in SesEmailService for notifications.
+        -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>sesv2</artifactId>
+        </dependency>
+
+        <!--
+            Secrets Manager — secure config retrieval.
+            Gives you SecretsManagerClient.
+            In production, DB passwords and API keys come from here
+            not from environment variables directly.
+        -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>secretsmanager</artifactId>
+        </dependency>
+
+        <!--
+            AWS URL Connection HTTP Client.
+            The AWS SDK needs an HTTP client to make requests to AWS.
+            This is the standard synchronous HTTP client.
+            Without it the AWS SDK throws a NoClassDefFoundError at runtime.
+        -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>url-connection-client</artifactId>
+        </dependency>
+
+        <!-- ==================== UTILITIES ==================== -->
+        <!--
+            Lombok — generates boilerplate at compile time.
+            @Getter, @Setter, @NoArgsConstructor, @Builder,
+            @RequiredArgsConstructor, @Slf4j all come from here.
+            optional=true means it's not included in the final JAR —
+            it only runs during compilation.
+        -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+
+        <!--
+            Jackson Databind — JSON serialisation and deserialisation.
+            Spring Boot includes this via spring-boot-starter-web
+            but we declare it explicitly because SqsPublisher uses
+            ObjectMapper directly to serialise events to JSON strings.
+        -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-flyway-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-oauth2-jose</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
 
+        <!-- ==================== MONITORING ==================== -->
+        <!--
+            Spring Actuator — exposes /actuator/health endpoint.
+            AWS ECS and ALB ping this endpoint to check if your
+            container is alive. Without it ECS kills your container.
+        -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+
+        <!-- ==================== TESTING ==================== -->
+        <!--
+            Spring Boot Test — gives you @SpringBootTest,
+            MockMvc, @WebMvcTest, @DataJpaTest.
+            The foundation of all your tests.
+        -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation-test</artifactId>
+            <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!--
+            Spring Security Test — gives you @WithMockUser,
+            SecurityMockMvcRequestPostProcessors.
+            Needed to test secured endpoints without a real JWT.
+        -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webservices-test</artifactId>
-            <scope>test</scope>
-        </dependency>
+
+        <!--
+            Spring Boot Testcontainers integration — lets you spin up
+            a real PostgreSQL Docker container during tests instead of
+            using an in-memory database. Tests run against real Postgres.
+        -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-testcontainers</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!--
+            Testcontainers JUnit 5 integration — @Testcontainers and
+            @Container annotations that manage container lifecycle.
+        -->
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers-junit-jupiter</artifactId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!--
+            Testcontainers PostgreSQL module — the actual PostgreSQL
+            container image configuration for Testcontainers.
+        -->
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers-postgresql</artifactId>
+            <artifactId>postgresql</artifactId>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>
@@ -138,6 +305,13 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
+                    <source>21</source>
+                    <target>21</target>
+                    <!--
+                        Lombok MUST come before any other annotation processor.
+                        It generates getters/setters that other processors read.
+                        Order matters — wrong order causes "cannot find symbol" errors.
+                    -->
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
@@ -146,11 +320,16 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <excludes>
+                        <!--
+                            Lombok is compile-only — exclude from the final JAR.
+                            It has already done its job by this point.
+                        -->
                         <exclude>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>

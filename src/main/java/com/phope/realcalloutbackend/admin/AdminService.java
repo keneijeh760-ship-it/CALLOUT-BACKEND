@@ -22,12 +22,12 @@ import java.util.UUID;
 public class AdminService {
 
     private final IncidentRepository incidentRepository;
-    UUID orgId = TenantContext.getTenant();
+
 
     public Page<Incident> getIncidentQueue(Pageable pageable) {
 
 
-        // Moderators see everything except spam
+        UUID orgId = TenantContext.getTenant();
         return incidentRepository.findActiveFeed(
                 orgId,
                 List.of(IncidentStatus.SPAM),
@@ -36,6 +36,7 @@ public class AdminService {
     }
 
     public Incident assignIncident(UUID incidentId, AssignIncidentRequest request){
+        UUID orgId = TenantContext.getTenant();
         Incident incident = incidentRepository.findByIdAndOrgId(incidentId, orgId )
                 .orElseThrow(() -> new NotFoundException("Incident", incidentId));
 

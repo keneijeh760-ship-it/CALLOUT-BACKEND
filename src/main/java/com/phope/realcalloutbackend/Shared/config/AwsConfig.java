@@ -3,6 +3,11 @@ package com.phope.realcalloutbackend.Shared.config;
 import lombok.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
+import software.amazon.awssdk.services.sesv2.SesV2Client;
+import software.amazon.awssdk.services.sqs.SqsClient;
 
 import javax.swing.plaf.synth.Region;
 
@@ -14,7 +19,7 @@ public class AwsConfig {
 
 
     @Bean
-    public  S3CLient s3CLient(){
+    public  S3Client s3CLient(){
         return  S3Client.builder()
                 .region(Region.of(region))
                 .build();
