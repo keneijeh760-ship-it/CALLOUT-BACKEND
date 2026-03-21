@@ -3,6 +3,8 @@ package com.phope.realcalloutbackend.incident;
 import com.phope.realcalloutbackend.Shared.config.exception.InvalidStateTransitionException;
 import com.phope.realcalloutbackend.Shared.config.exception.NotFoundException;
 import com.phope.realcalloutbackend.Shared.config.tenant.TenantContext;
+import com.phope.realcalloutbackend.aws.sqs.SqsPublisher;
+import com.phope.realcalloutbackend.aws.sqs.event.IncidentSubmittedEvent;
 import com.phope.realcalloutbackend.incident.dto.SubmitIncidentRequest;
 import com.phope.realcalloutbackend.incident.dto.UpdateStatusRequest;
 import com.phope.realcalloutbackend.user.User;
@@ -23,6 +25,7 @@ import java.util.UUID;
 public class IncidentService {
     private final IncidentRepository incidentRepository;
     private final UserService userService;
+    private  final SqsPublisher sqsPublisher;
     @Transactional
     public Incident submitIncident(SubmitIncidentRequest request, Jwt jwt){
         User reporter = userService.getOrCreateUser(jwt);
@@ -40,12 +43,17 @@ public class IncidentService {
                 : IncidentUrgency.NORMAL);
         incident.setAttachment_urls(request.getAttachmentUrls());
 
-        return incidentRepository.save(incident);
+        Incident saved = incidentRepository.save(incident);
 
+        sqsPublisher.publishIncidentSubmitted(
+                new IncidentSubmittedEvent(
+                        saved.getId(),
+                        saved.getTitle(),
+                        saved.getOrgId()
+                )
+        );
 
-
-
-
+        return saved;
     }
 
     public Incident getById (UUID id){

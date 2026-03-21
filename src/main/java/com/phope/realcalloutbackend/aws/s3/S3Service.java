@@ -1,6 +1,7 @@
 package com.phope.realcalloutbackend.aws.s3;
 
 import com.phope.realcalloutbackend.aws.s3.dto.PresignedUrlResponse;
+import com.phope.realcalloutbackend.aws.sqs.SqsPublisher;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class S3Service {
     private  final S3Presigner s3Presigner;
+
 
     @Value("${aws.s3.bucket-name}")
     private String bucketName;
