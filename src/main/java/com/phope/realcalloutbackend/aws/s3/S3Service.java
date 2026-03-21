@@ -2,7 +2,8 @@ package com.phope.realcalloutbackend.aws.s3;
 
 import com.phope.realcalloutbackend.aws.s3.dto.PresignedUrlResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
