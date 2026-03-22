@@ -1,9 +1,12 @@
 package com.phope.realcalloutbackend.Shared.config;
 
 import com.phope.realcalloutbackend.Shared.config.tenant.TenantFilter;
+import com.phope.realcalloutbackend.Shared.ratelimit.RateLimitConfig;
 import lombok.RequiredArgsConstructor;
+import com.phope.realcalloutbackend.Shared.ratelimit.RateLimiterFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,6 +25,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final TenantFilter tenantFilter;
+    private final RateLimiterFilter rateLimitFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
@@ -40,7 +44,8 @@ public class SecurityConfig {
                         .jwt(jwt-> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
                 )
 
-                .addFilterAfter(tenantFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterAfter(tenantFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(rateLimitFilter, TenantFilter.class);
         return http.build();
     }
 
@@ -53,6 +58,12 @@ public class SecurityConfig {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
         return converter;
+    }
+
+    @Bean
+    public RateLimiterFilter rateLimitFilter(RedisTemplate<String, Object> redisTemplate,
+                                           RateLimitConfig rateLimitConfig) {
+        return new RateLimiterFilter(redisTemplate, rateLimitConfig);
     }
 
 
