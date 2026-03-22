@@ -27,7 +27,9 @@ public class SubmitIncidentRequest {
     private String description;
     @NotNull(message = "Category is required")
     private UUID categoryId;
+    @Builder.Default
     private List<String> attachmentUrls = new ArrayList<>();
     private String locationTag;
+    @Builder.Default
     private IncidentUrgency urgency = IncidentUrgency.NORMAL;
 }
