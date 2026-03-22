@@ -31,3 +31,13 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Environment variables — never commit real secrets
+.env
+
+# Maven
+target/
+
+# IntelliJ
+.idea/
+*.iml
