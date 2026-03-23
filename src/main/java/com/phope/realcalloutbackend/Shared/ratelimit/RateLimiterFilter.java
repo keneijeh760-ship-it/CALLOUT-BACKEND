@@ -26,12 +26,7 @@ public class RateLimiterFilter extends OncePerRequestFilter {
     private final RateLimitConfig rateLimitConfig;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !(authentication.getPrincipal() instanceof Jwt jwt)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+
 
         String userId = jwt.getSubject();
 
